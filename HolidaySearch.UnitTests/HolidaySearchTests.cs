@@ -39,7 +39,7 @@ public class HolidaySearchTests
     public void HolidaySearch_ShouldOnlyReturnHolidaysWhereFlightAndHotelLocationMatch()
     {
         // Arrange
-        var search = new HolidaySearch(_hotelsSearch, _flightSearch,  _airportSearch);
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
 
         // Act
         search.Search(new HolidaySearchQuery());
@@ -91,10 +91,12 @@ public class HolidaySearchTests
         search.Results.Count.ShouldBeGreaterThan(0);
         search.Results.ForEach(result => result.Flight.From.ShouldBe(departureAirport));
     }
+
     [Theory]
     [InlineData("London", "LGW", "LTN")]
     [InlineData("Manchester", "MAN")]
-    public void HolidaySearch_ShouldOnlyReturnHolidaysWhereFlightMatchesQueriedDepartureRegion(string departureRegion, params string[] expectedDepartureRegions)
+    public void HolidaySearch_ShouldOnlyReturnHolidaysWhereFlightMatchesQueriedDepartureRegion(string departureRegion,
+        params string[] expectedDepartureRegions)
     {
         // Arrange
         var query = new HolidaySearchQuery
@@ -132,12 +134,12 @@ public class HolidaySearchTests
         // Assert
         search.Results.Count.ShouldBeGreaterThan(0);
         search.Results.ForEach(result =>
-            {
-                result.Flight.DepartureDate.ShouldBeEquivalentTo(new DateOnly(year, month, day));
-                result.Hotel.ArrivalDate.ShouldBeEquivalentTo(new DateOnly(year, month, day));
-            });
+        {
+            result.Flight.DepartureDate.ShouldBeEquivalentTo(new DateOnly(year, month, day));
+            result.Hotel.ArrivalDate.ShouldBeEquivalentTo(new DateOnly(year, month, day));
+        });
     }
-    
+
     [Theory]
     [InlineData(7)]
     [InlineData(10)]
@@ -157,7 +159,59 @@ public class HolidaySearchTests
         // Assert
         search.Results.Count.ShouldBeGreaterThan(0);
         search.Results.ForEach(result => result.Hotel.Nights.ShouldBe(duration));
-    }    
-    
-    
+    }
+
+    [Fact]
+    public void HolidaySearch_ShouldReturnCorrectValuesForExampleCase1()
+    {
+        // Arrange
+        var query = new HolidaySearchQuery()
+            { DepartingFrom = "MAN", TravelingTo = "AGP", DepartureDate = "2023/07/01", Duration = 7 };
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
+
+        // Act
+        search.Search(query);
+
+        // Assert
+        search.Results.Count.ShouldBeGreaterThan(0);
+        search.Results.First().Flight.Id.ShouldBe(2);
+        search.Results.First().Hotel.Id.ShouldBe(9);
+    }
+
+    [Fact]
+    public void HolidaySearch_ShouldReturnCorrectValuesForExampleCase2()
+    {
+        // Arrange
+        var query = new HolidaySearchQuery()
+        {
+            DepartingFrom = "London", DepartingFromType = LocationType.Region, TravelingTo = "PMI",
+            DepartureDate = "2023/06/15", Duration = 10
+        };
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
+
+        // Act
+        search.Search(query);
+
+        // Assert
+        search.Results.Count.ShouldBeGreaterThan(0);
+        search.Results.First().Flight.Id.ShouldBe(6);
+        search.Results.First().Hotel.Id.ShouldBe(5);
+    }
+
+    [Fact]
+    public void HolidaySearch_ShouldReturnCorrectValuesForExampleCase3()
+    {
+        // Arrange
+        var query = new HolidaySearchQuery()
+            { DepartingFrom = null, TravelingTo = "LPA", DepartureDate = "2022/11/10", Duration = 14 };
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
+
+        // Act
+        search.Search(query);
+
+        // Assert
+        search.Results.Count.ShouldBeGreaterThan(0);
+        search.Results.First().Flight.Id.ShouldBe(7);
+        search.Results.First().Hotel.Id.ShouldBe(6);
+    }
 }
