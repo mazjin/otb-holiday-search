@@ -24,7 +24,7 @@ public class HolidaySearchTests
         var search = new HolidaySearch(_hotelsSearch, _flightSearch);
 
         // Act
-        search.Search(new HolidaySearchQuery() { TravelingTo = "AGP", DepartingFrom = "MAN"});
+        search.Search(new HolidaySearchQuery());
 
         // Assert
         search.Results.First().ShouldBe(search.Results.MinBy(x => x.TotalPrice));
@@ -37,7 +37,7 @@ public class HolidaySearchTests
         var search = new HolidaySearch(_hotelsSearch, _flightSearch);
 
         // Act
-        search.Search(new HolidaySearchQuery() { TravelingTo = "AGP", DepartingFrom = "MAN" });
+        search.Search(new HolidaySearchQuery());
 
         // Assert
         search.Results.ForEach(result => result.Hotel.LocalAirports.ShouldContain(result.Flight.To));
@@ -53,7 +53,6 @@ public class HolidaySearchTests
         // Arrange
         var query = new HolidaySearchQuery
         {
-            DepartingFrom = "MAN",
             TravelingTo = destination,
         };
         var search = new HolidaySearch(_hotelsSearch, _flightSearch);
@@ -66,21 +65,15 @@ public class HolidaySearchTests
     }
 
     [Theory]
-    [InlineData("MAN", "TFS")]
-    [InlineData("MAN", "AGP")]
-    [InlineData("MAN", "PMI")]
-    [InlineData("MAN", "LPA")]
-    [InlineData("LTN", "PMI")]
-    [InlineData("LGW", "AGP")]
-    [InlineData("LGW", "PMI")]
-    public void HolidaySearch_ShouldOnlyReturnHolidaysWhereFlightMatchesQueriedDepartureAirport(string departureAirport,
-        string destination)
+    [InlineData("MAN")]
+    [InlineData("LTN")]
+    [InlineData("LGW")]
+    public void HolidaySearch_ShouldOnlyReturnHolidaysWhereFlightMatchesQueriedDepartureAirport(string departureAirport)
     {
         // Arrange
         var query = new HolidaySearchQuery
         {
             DepartingFrom = departureAirport,
-            TravelingTo = destination,
         };
         var search = new HolidaySearch(_hotelsSearch, _flightSearch);
 

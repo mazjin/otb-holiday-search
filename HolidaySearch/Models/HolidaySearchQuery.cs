@@ -2,7 +2,7 @@
 
 public class HolidaySearchQuery
 {
-    public string TravelingTo { get; set; }
-    public string DepartingFrom { get; set; }
+    public string? TravelingTo { get; set; }
+    public string? DepartingFrom { get; set; }
     public string? DepartureDate { get; set; }
 }
