@@ -1,3 +1,4 @@
+using HolidaySearch.Models;
 using NSubstitute;
 using Shouldly;
 
@@ -19,8 +20,11 @@ public class HolidaySearchTests
     [Fact]
     public void HolidaySearch_ShouldReturnListOfHolidaysOrderedByTotalPrice()
     {
-        // Act
+        // Arrange
         var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+        
+        // Act
+        search.Search(new HolidaySearchQuery() {TravelingTo = "AGP"});
 
         // Assert
         search.Results.First().ShouldBe(search.Results.MinBy(x => x.TotalPrice));
@@ -29,12 +33,16 @@ public class HolidaySearchTests
     [Fact]
     public void HolidaySearch_ShouldOnlyReturnHolidaysWhereFlightAndHotelLocationMatch()
     {
-        // Act
+        // Arrange
         var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+        
+        // Act
+        search.Search(new HolidaySearchQuery() {TravelingTo = "AGP"});
         
         // Assert
         search.Results.ForEach(result => result.Hotel.LocalAirports.ShouldContain(result.Flight.To));
     }
+    
     [Theory]
     [InlineData("AGP")]
     [InlineData("PMI")]
@@ -43,9 +51,14 @@ public class HolidaySearchTests
     public void HolidaySearch_ShouldOnlyReturnHolidaysWhereHotelMatchesQueriedDestination(string destination)
     {
         // Arrange
+        var query = new HolidaySearchQuery
+        {
+            TravelingTo = destination
+        };
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
         
         // Act
-        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+        search.Search(query);
         
         // Assert
         search.Results.ForEach(result => result.Hotel.LocalAirports.ShouldContain(destination));
