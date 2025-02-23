@@ -5,17 +5,22 @@ namespace HolidaySearch.UnitTests;
 
 public class HolidaySearchTests
 {
+    private readonly IHotelsSearch _hotelsSearch;
+    private readonly IFlightsSearch _flightSearch;
+
+    public HolidaySearchTests()
+    {
+        _hotelsSearch = Substitute.For<IHotelsSearch>();
+        _hotelsSearch.GetHotels().Returns(Fixtures.GetHotels());
+        _flightSearch = Substitute.For<IFlightsSearch>();
+        _flightSearch.GetFlights().Returns(Fixtures.GetFlights());
+    }
+    
     [Fact]
     public void HolidaySearch_ShouldReturnListOfHolidaysOrderedByTotalPrice()
     {
-        // Arrange
-        var hotelsSearch = Substitute.For<IHotelsSearch>();
-        hotelsSearch.GetHotels().Returns(Fixtures.GetHotels());
-        var flightSearch = Substitute.For<IFlightsSearch>();
-        flightSearch.GetFlights().Returns(Fixtures.GetFlights());
-        
         // Act
-        var search = new HolidaySearch(hotelsSearch, flightSearch);
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
 
         // Assert
         search.Results.First().ShouldBe(search.Results.MinBy(x => x.TotalPrice));
@@ -24,17 +29,12 @@ public class HolidaySearchTests
     [Fact]
     public void HolidaySearch_ShouldOnlyReturnHolidaysWhereFlightAndHotelLocationMatch()
     {
-        // Arrange
-        var hotelsSearch = Substitute.For<IHotelsSearch>();
-        hotelsSearch.GetHotels().Returns(Fixtures.GetHotels());
-        var flightSearch = Substitute.For<IFlightsSearch>();
-        flightSearch.GetFlights().Returns(Fixtures.GetFlights());
-        
         // Act
-        var search = new HolidaySearch(hotelsSearch, flightSearch);
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+        
+        // Assert
         search.Results.ForEach(result => result.Hotel.LocalAirports.ShouldContain(result.Flight.To));
     }
-    
 }
 
 
