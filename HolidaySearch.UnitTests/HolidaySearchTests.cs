@@ -95,8 +95,6 @@ public class HolidaySearchTests
         // Arrange
         var query = new HolidaySearchQuery
         {
-            DepartingFrom = "MAN",
-            TravelingTo = "AGP",
             DepartureDate = $"{year}/{month}/{day}"
         };
         var search = new HolidaySearch(_hotelsSearch, _flightSearch);
@@ -110,5 +108,24 @@ public class HolidaySearchTests
                 result.Flight.DepartureDate.ShouldBeEquivalentTo(new DateOnly(year, month, day));
                 result.Hotel.ArrivalDate.ShouldBeEquivalentTo(new DateOnly(year, month, day));
             });
+    }
+    
+    [Theory]
+    [InlineData(7)]
+    [InlineData(10)]
+    [InlineData(14)]
+    public void HolidaySearch_ShouldOnlyReturnHolidaysWhereStayDurationMatchesHotel(int duration)
+    {
+        // Arrange
+        var query = new HolidaySearchQuery
+        {
+        };
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+
+        // Act
+        search.Search(query);
+
+        // Assert
+        search.Results.ForEach(result => result.Hotel.Nights.ShouldBe(duration));
     }
 }
