@@ -16,16 +16,16 @@ public class HolidaySearch
 
     public void Search(HolidaySearchQuery query)
     {
-        var hotels = _hotelsSearch.GetHotels();
-        var flights = _flightsSearch.GetFlights();
-        Results = hotels
-            .Where(hotel => MatchesTravellingTo(query, hotel))
-            .SelectMany(hotel => hotel.LocalAirports, (hotel, airport) => new HolidaySearchResult
-            {
-                Flight = flights.FirstOrDefault(flight => hotel.LocalAirports.Contains(flight.To) 
+        var hotels = _hotelsSearch.GetHotels(hotel => MatchesTravellingTo(query, hotel));
+        var nearbyAirports = hotels.SelectMany(hotel => hotel.LocalAirports, (_, airport) => airport).ToList();
+        var flights = _flightsSearch.GetFlights(flight => nearbyAirports.Contains(flight.To)
                                                           && MatchesTravellingTo(query, flight)
                                                           && MatchesDepartingFrom(query, flight)
-                                                          && MatchesDepartureDate(query, flight)),
+                                                          && MatchesDepartureDate(query, flight));
+        Results = hotels
+            .SelectMany(hotel => hotel.LocalAirports, (hotel, airport) => new HolidaySearchResult
+            {
+                Flight = flights.FirstOrDefault(flight => hotel.LocalAirports.Contains(flight.To)),
                 Hotel = hotel,
             })
             .Where(result => result.Flight is not null)

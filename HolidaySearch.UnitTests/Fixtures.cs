@@ -5,7 +5,7 @@ namespace HolidaySearch.UnitTests;
 
 public static class Fixtures
 {
-    public static List<Hotel> GetHotels()
+    public static List<Hotel> GetHotels(Func<Hotel, bool>? filter)
     {
         List<Hotel>? hotels = new();
         using (StreamReader sr = new StreamReader("hotels.json"))
@@ -14,9 +14,9 @@ public static class Fixtures
             hotels = JsonSerializer.Deserialize<List<Hotel>>(json);
         }
         if (hotels is null) throw new FileNotFoundException();
-        return hotels;
+        return filter is null ? hotels : hotels.Where(filter).ToList();
     }
-    public static List<Flight> GetFlights()
+    public static List<Flight> GetFlights(Func<Flight, bool>? filter)
     {
         List<Flight>? flights = new();
         using (StreamReader sr = new StreamReader("flights.json"))
@@ -25,7 +25,7 @@ public static class Fixtures
             flights = JsonSerializer.Deserialize<List<Flight>>(json);
         }
         if (flights is null) throw new FileNotFoundException();
-        return flights;
+        return filter is null ? flights : flights.Where(filter).ToList();
     }
     
     

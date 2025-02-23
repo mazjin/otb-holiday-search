@@ -12,9 +12,10 @@ public class HolidaySearchTests
     public HolidaySearchTests()
     {
         _hotelsSearch = Substitute.For<IHotelsSearch>();
-        _hotelsSearch.GetHotels().Returns(Fixtures.GetHotels());
+        _hotelsSearch.GetHotels(Arg.Any<Func<Hotel, bool>>()).Returns(x => Fixtures.GetHotels((Func<Hotel, bool>)x[0]));
         _flightSearch = Substitute.For<IFlightsSearch>();
-        _flightSearch.GetFlights().Returns(Fixtures.GetFlights());
+        _flightSearch.GetFlights(Arg.Any<Func<Flight, bool>>())
+            .Returns(x => Fixtures.GetFlights((Func<Flight, bool>)x[0]));
     }
 
     [Fact]
@@ -83,12 +84,13 @@ public class HolidaySearchTests
         // Assert
         search.Results.ForEach(result => result.Flight.From.ShouldBe(departureAirport));
     }
-    
+
     [Theory]
-    [InlineData(2023,04,11)]
-    [InlineData(2023,07,01)]
-    [InlineData(2023,10,25)]
-    public void HolidaySearch_ShouldOnlyReturnHolidaysWhereDepartureDateMatchesQueriedDepartureDate(int year,int month,int day)
+    [InlineData(2023, 04, 11)]
+    [InlineData(2023, 07, 01)]
+    [InlineData(2023, 10, 25)]
+    public void HolidaySearch_ShouldOnlyReturnHolidaysWhereDepartureDateMatchesQueriedDepartureDate(int year, int month,
+        int day)
     {
         // Arrange
         var query = new HolidaySearchQuery
@@ -103,6 +105,7 @@ public class HolidaySearchTests
         search.Search(query);
 
         // Assert
-        search.Results.ForEach(result => result.Flight.DepartureDate.ShouldBeEquivalentTo(new DateOnly(year,month,day)));
+        search.Results.ForEach(result =>
+            result.Flight.DepartureDate.ShouldBeEquivalentTo(new DateOnly(year, month, day)));
     }
 }

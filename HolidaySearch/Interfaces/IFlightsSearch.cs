@@ -4,5 +4,5 @@ namespace HolidaySearch;
 
 public interface IFlightsSearch
 {
-    List<Flight> GetFlights();
+    List<Flight> GetFlights(Func<Flight, bool>? filter);
 }
