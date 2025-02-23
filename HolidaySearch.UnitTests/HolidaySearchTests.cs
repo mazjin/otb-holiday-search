@@ -35,6 +35,21 @@ public class HolidaySearchTests
         // Assert
         search.Results.ForEach(result => result.Hotel.LocalAirports.ShouldContain(result.Flight.To));
     }
+    [Theory]
+    [InlineData("AGP")]
+    [InlineData("PMI")]
+    [InlineData("LPA")]
+    [InlineData("TFS")]
+    public void HolidaySearch_ShouldOnlyReturnHolidaysWhereHotelMatchesQueriedDestination(string destination)
+    {
+        // Arrange
+        
+        // Act
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+        
+        // Assert
+        search.Results.ForEach(result => result.Hotel.LocalAirports.ShouldContain(destination));
+    }
 }
 
 
