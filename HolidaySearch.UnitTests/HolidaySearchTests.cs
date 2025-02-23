@@ -90,4 +90,25 @@ public class HolidaySearchTests
         // Assert
         search.Results.ForEach(result => result.Flight.From.ShouldBe(departureAirport));
     }
+    
+    [Theory]
+    [InlineData(2023,04,11)]
+    [InlineData(2023,07,01)]
+    [InlineData(2023,10,25)]
+    public void HolidaySearch_ShouldOnlyReturnHolidaysWhereDepartureDateMatchesQueriedDepartureDate(int year,int month,int day)
+    {
+        // Arrange
+        var query = new HolidaySearchQuery
+        {
+            DepartingFrom = "MAN",
+            TravelingTo = "AGP",
+        };
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+
+        // Act
+        search.Search(query);
+
+        // Assert
+        search.Results.ForEach(result => result.Flight.DepartureDate.ShouldBeEquivalentTo(new DateOnly(year,month,day)));
+    }
 }
