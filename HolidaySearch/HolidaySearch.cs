@@ -21,7 +21,7 @@ public class HolidaySearch
             .Where(hotel => hotel.LocalAirports.Contains(query.TravelingTo))
             .SelectMany(hotel => hotel.LocalAirports, (hotel, airport) => new HolidaySearchResult
         {
-            Flight = flights.FirstOrDefault(x => x.To == query.TravelingTo),
+            Flight = flights.FirstOrDefault(x => x.To == query.TravelingTo && x.From == query.DepartingFrom),
             Hotel = hotel,
         }).OrderBy(x => x.TotalPrice).ToList();
     }

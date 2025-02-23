@@ -16,15 +16,15 @@ public class HolidaySearchTests
         _flightSearch = Substitute.For<IFlightsSearch>();
         _flightSearch.GetFlights().Returns(Fixtures.GetFlights());
     }
-    
+
     [Fact]
     public void HolidaySearch_ShouldReturnListOfHolidaysOrderedByTotalPrice()
     {
         // Arrange
         var search = new HolidaySearch(_hotelsSearch, _flightSearch);
-        
+
         // Act
-        search.Search(new HolidaySearchQuery() {TravelingTo = "AGP"});
+        search.Search(new HolidaySearchQuery() { TravelingTo = "AGP", DepartingFrom = "MAN"});
 
         // Assert
         search.Results.First().ShouldBe(search.Results.MinBy(x => x.TotalPrice));
@@ -35,14 +35,14 @@ public class HolidaySearchTests
     {
         // Arrange
         var search = new HolidaySearch(_hotelsSearch, _flightSearch);
-        
+
         // Act
-        search.Search(new HolidaySearchQuery() {TravelingTo = "AGP"});
-        
+        search.Search(new HolidaySearchQuery() { TravelingTo = "AGP", DepartingFrom = "MAN" });
+
         // Assert
         search.Results.ForEach(result => result.Hotel.LocalAirports.ShouldContain(result.Flight.To));
     }
-    
+
     [Theory]
     [InlineData("AGP")]
     [InlineData("PMI")]
@@ -53,36 +53,41 @@ public class HolidaySearchTests
         // Arrange
         var query = new HolidaySearchQuery
         {
-            TravelingTo = destination
+            DepartingFrom = "MAN",
+            TravelingTo = destination,
         };
         var search = new HolidaySearch(_hotelsSearch, _flightSearch);
-        
+
         // Act
         search.Search(query);
-        
+
         // Assert
         search.Results.ForEach(result => result.Hotel.LocalAirports.ShouldContain(destination));
     }
-    
+
     [Theory]
-    [InlineData("MAN")]
-    [InlineData("LTN")]
-    [InlineData("LGW")]
-    public void HolidaySearch_ShouldOnlyReturnHolidaysWhereFlightMatchesQueriedDepartureAirport(string departureAirport)
+    [InlineData("MAN", "TFS")]
+    [InlineData("MAN", "AGP")]
+    [InlineData("MAN", "PMI")]
+    [InlineData("MAN", "LPA")]
+    [InlineData("LTN", "PMI")]
+    [InlineData("LGW", "AGP")]
+    [InlineData("LGW", "PMI")]
+    public void HolidaySearch_ShouldOnlyReturnHolidaysWhereFlightMatchesQueriedDepartureAirport(string departureAirport,
+        string destination)
     {
         // Arrange
         var query = new HolidaySearchQuery
         {
-            TravelingTo = "LPA"
+            DepartingFrom = departureAirport,
+            TravelingTo = destination,
         };
         var search = new HolidaySearch(_hotelsSearch, _flightSearch);
-        
+
         // Act
         search.Search(query);
-        
+
         // Assert
         search.Results.ForEach(result => result.Flight.From.ShouldBe(departureAirport));
     }
 }
-
-
