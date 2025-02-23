@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HolidaySearch.UnitTests", "HolidaySearch.UnitTests\HolidaySearch.UnitTests.csproj", "{A25CB02A-C35F-48A4-8712-A531DE7B6273}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HolidaySearch", "HolidaySearch\HolidaySearch.csproj", "{6F96D3B6-D3EB-4CE4-922E-E5787DE852B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{A25CB02A-C35F-48A4-8712-A531DE7B6273}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A25CB02A-C35F-48A4-8712-A531DE7B6273}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A25CB02A-C35F-48A4-8712-A531DE7B6273}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F96D3B6-D3EB-4CE4-922E-E5787DE852B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F96D3B6-D3EB-4CE4-922E-E5787DE852B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F96D3B6-D3EB-4CE4-922E-E5787DE852B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F96D3B6-D3EB-4CE4-922E-E5787DE852B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
