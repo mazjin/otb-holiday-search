@@ -63,6 +63,26 @@ public class HolidaySearchTests
         // Assert
         search.Results.ForEach(result => result.Hotel.LocalAirports.ShouldContain(destination));
     }
+    
+    [Theory]
+    [InlineData("MAN")]
+    [InlineData("LTN")]
+    [InlineData("LGW")]
+    public void HolidaySearch_ShouldOnlyReturnHolidaysWhereFlightMatchesQueriedDepartureAirport(string departureAirport)
+    {
+        // Arrange
+        var query = new HolidaySearchQuery
+        {
+            TravelingTo = "LPA"
+        };
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+        
+        // Act
+        search.Search(query);
+        
+        // Assert
+        search.Results.ForEach(result => result.Flight.From.ShouldBe(departureAirport));
+    }
 }
 
 
