@@ -16,7 +16,8 @@ public class HolidaySearch
 
     public void Search(HolidaySearchQuery query)
     {
-        var hotels = _hotelsSearch.GetHotels(hotel => MatchesTravellingTo(query, hotel));
+        var hotels = _hotelsSearch.GetHotels(hotel => MatchesTravellingTo(query, hotel)
+                                                      && MatchesDepartureDate(query, hotel));
         var destinations = hotels.SelectMany(hotel => hotel.LocalAirports, (hotel, airport) => new { hotel, airport })
             .ToList();
         var airports = destinations.Select(x => x.airport).Distinct().ToList();
@@ -50,5 +51,11 @@ public class HolidaySearch
     {
         return string.IsNullOrEmpty(query.DepartureDate) ||
                DateOnly.Parse(query.DepartureDate).Equals(flight.DepartureDate);
+    }
+
+    private bool MatchesDepartureDate(HolidaySearchQuery query, Hotel hotel)
+    {
+        return string.IsNullOrEmpty(query.DepartureDate) ||
+               DateOnly.Parse(query.DepartureDate).Equals(hotel.ArrivalDate);
     }
 }
