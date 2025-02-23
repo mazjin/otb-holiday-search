@@ -41,6 +41,7 @@ public class HolidaySearchTests
         search.Search(new HolidaySearchQuery());
 
         // Assert
+        search.Results.Count.ShouldBeGreaterThan(0);
         search.Results.ForEach(result => result.Hotel.LocalAirports.ShouldContain(result.Flight.To));
     }
 
@@ -62,6 +63,7 @@ public class HolidaySearchTests
         search.Search(query);
 
         // Assert
+        search.Results.Count.ShouldBeGreaterThan(0);
         search.Results.ForEach(result => result.Hotel.LocalAirports.ShouldContain(destination));
     }
 
@@ -82,13 +84,33 @@ public class HolidaySearchTests
         search.Search(query);
 
         // Assert
+        search.Results.Count.ShouldBeGreaterThan(0);
         search.Results.ForEach(result => result.Flight.From.ShouldBe(departureAirport));
+    }
+    [Theory]
+    [InlineData("London", "LGW", "LTN")]
+    [InlineData("Manchester", "MAN")]
+    public void HolidaySearch_ShouldOnlyReturnHolidaysWhereFlightMatchesQueriedDepartureRegion(string departureRegion, params string[] expectedDepartureRegions)
+    {
+        // Arrange
+        var query = new HolidaySearchQuery
+        {
+            DepartingFrom = departureRegion,
+        };
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+
+        // Act
+        search.Search(query);
+
+        // Assert
+        search.Results.Count.ShouldBeGreaterThan(0);
+        search.Results.ForEach(result => expectedDepartureRegions.ShouldContain(result.Flight.From));
     }
 
     [Theory]
-    [InlineData(2023, 04, 11)]
+    [InlineData(2023, 06, 15)]
     [InlineData(2023, 07, 01)]
-    [InlineData(2023, 10, 25)]
+    [InlineData(2022, 11, 10)]
     public void HolidaySearch_ShouldOnlyReturnHolidaysWhereDepartureDateMatchesQueriedDepartureDate(int year, int month,
         int day)
     {
@@ -103,6 +125,7 @@ public class HolidaySearchTests
         search.Search(query);
 
         // Assert
+        search.Results.Count.ShouldBeGreaterThan(0);
         search.Results.ForEach(result =>
             {
                 result.Flight.DepartureDate.ShouldBeEquivalentTo(new DateOnly(year, month, day));
@@ -127,6 +150,9 @@ public class HolidaySearchTests
         search.Search(query);
 
         // Assert
+        search.Results.Count.ShouldBeGreaterThan(0);
         search.Results.ForEach(result => result.Hotel.Nights.ShouldBe(duration));
-    }
+    }    
+    
+    
 }
