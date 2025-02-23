@@ -119,6 +119,7 @@ public class HolidaySearchTests
         // Arrange
         var query = new HolidaySearchQuery
         {
+            Duration = duration
         };
         var search = new HolidaySearch(_hotelsSearch, _flightSearch);
 

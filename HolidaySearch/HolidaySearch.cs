@@ -17,6 +17,7 @@ public class HolidaySearch
     public void Search(HolidaySearchQuery query)
     {
         var hotels = _hotelsSearch.GetHotels(hotel => MatchesTravellingTo(query, hotel)
+                                                      && MatchesDuration(query, hotel)
                                                       && MatchesDepartureDate(query, hotel));
         var destinations = hotels.SelectMany(hotel => hotel.LocalAirports, (hotel, airport) => new { hotel, airport })
             .ToList();
@@ -30,6 +31,11 @@ public class HolidaySearch
                 (destination, flight) => new HolidaySearchResult() { Hotel = destination.hotel, Flight = flight })
             .OrderBy(x => x.TotalPrice)
             .ToList();
+    }
+
+    private bool MatchesDuration(HolidaySearchQuery query, Hotel hotel)
+    {
+        return query.Duration is null || query.Duration.Equals(hotel.Nights);
     }
 
     private bool MatchesDepartingFrom(HolidaySearchQuery query, Flight flight)
