@@ -1,0 +1,22 @@
+[
+  {
+    "name": "London Luton",
+    "code": "LTN",
+    "region": "London"
+  },
+  {
+    "name": "London Gatwick",
+    "code": "LGW",
+    "region": "London"
+  },
+  {
+    "name": "Manchester",
+    "code": "MAN",
+    "region": "Manchester"
+  },
+  {
+    "name": "Mallorca",
+    "code": "PMI",
+    "region": "Canary Islands"
+  }
+]

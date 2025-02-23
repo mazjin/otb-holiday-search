@@ -6,12 +6,14 @@ public class HolidaySearch
 {
     private readonly IFlightsSearch _flightsSearch;
     private readonly IHotelsSearch _hotelsSearch;
+    private readonly IAirportsSearch _airportsSearch;
     public List<HolidaySearchResult> Results { get; set; }
 
-    public HolidaySearch(IHotelsSearch hotelsSearch, IFlightsSearch flightsSearch)
+    public HolidaySearch(IHotelsSearch hotelsSearch, IFlightsSearch flightsSearch, IAirportsSearch airportsSearch)
     {
         _hotelsSearch = hotelsSearch;
         _flightsSearch = flightsSearch;
+        _airportsSearch = airportsSearch;
     }
 
     public void Search(HolidaySearchQuery query)
@@ -40,7 +42,8 @@ public class HolidaySearch
 
     private bool MatchesDepartingFrom(HolidaySearchQuery query, Flight flight)
     {
-        return string.IsNullOrEmpty(query.DepartingFrom) || query.DepartingFrom.Equals(flight.From);
+        var departureAirportCodes = query.DepartingFromType is LocationType.Region ? _airportsSearch.GetAirports(airport => airport.Region == query.DepartingFrom).Select(airport => airport.Code).ToList() : new List<string>(){query.DepartingFrom};
+        return string.IsNullOrEmpty(query.DepartingFrom) || departureAirportCodes.Contains(flight.From);
     }
 
     private bool MatchesTravellingTo(HolidaySearchQuery query, Flight flight)

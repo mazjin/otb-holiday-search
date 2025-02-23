@@ -8,6 +8,7 @@ public class HolidaySearchTests
 {
     private readonly IHotelsSearch _hotelsSearch;
     private readonly IFlightsSearch _flightSearch;
+    private readonly IAirportsSearch _airportSearch;
 
     public HolidaySearchTests()
     {
@@ -16,13 +17,16 @@ public class HolidaySearchTests
         _flightSearch = Substitute.For<IFlightsSearch>();
         _flightSearch.GetFlights(Arg.Any<Func<Flight, bool>>())
             .Returns(x => Fixtures.GetFlights((Func<Flight, bool>)x[0]));
+        _airportSearch = Substitute.For<IAirportsSearch>();
+        _airportSearch.GetAirports(Arg.Any<Func<Airport, bool>>())
+            .Returns(x => Fixtures.GetAirports((Func<Airport, bool>)x[0]));
     }
 
     [Fact]
     public void HolidaySearch_ShouldReturnListOfHolidaysOrderedByTotalPrice()
     {
         // Arrange
-        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
 
         // Act
         search.Search(new HolidaySearchQuery());
@@ -35,7 +39,7 @@ public class HolidaySearchTests
     public void HolidaySearch_ShouldOnlyReturnHolidaysWhereFlightAndHotelLocationMatch()
     {
         // Arrange
-        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch,  _airportSearch);
 
         // Act
         search.Search(new HolidaySearchQuery());
@@ -57,7 +61,7 @@ public class HolidaySearchTests
         {
             TravelingTo = destination,
         };
-        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
 
         // Act
         search.Search(query);
@@ -78,7 +82,7 @@ public class HolidaySearchTests
         {
             DepartingFrom = departureAirport,
         };
-        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
 
         // Act
         search.Search(query);
@@ -96,8 +100,9 @@ public class HolidaySearchTests
         var query = new HolidaySearchQuery
         {
             DepartingFrom = departureRegion,
+            DepartingFromType = LocationType.Region
         };
-        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
 
         // Act
         search.Search(query);
@@ -119,7 +124,7 @@ public class HolidaySearchTests
         {
             DepartureDate = $"{year}/{month}/{day}"
         };
-        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
 
         // Act
         search.Search(query);
@@ -144,7 +149,7 @@ public class HolidaySearchTests
         {
             Duration = duration
         };
-        var search = new HolidaySearch(_hotelsSearch, _flightSearch);
+        var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
 
         // Act
         search.Search(query);

@@ -27,6 +27,16 @@ public static class Fixtures
         if (flights is null) throw new FileNotFoundException();
         return filter is null ? flights : flights.Where(filter).ToList();
     }
-    
-    
+
+    public static List<Airport> GetAirports(Func<Airport, bool>? filter)
+    {
+        List<Airport>? airports = new();
+        using (StreamReader sr = new StreamReader("airports.json"))
+        {
+            string json = sr.ReadToEnd();
+            airports = JsonSerializer.Deserialize<List<Airport>>(json);
+        }
+        if (airports is null) throw new FileNotFoundException();
+        return filter is null ? airports : airports.Where(filter).ToList();
+    }
 }
