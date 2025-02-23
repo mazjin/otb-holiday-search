@@ -19,7 +19,7 @@ public class HolidaySearch
         var flights = _flightsSearch.GetFlights();
         Results = hotels
             .Where(hotel => hotel.LocalAirports.Contains(query.TravelingTo))
-            .SelectMany(hotel => hotel.LocalAirports, (hotel, airport) => new HolidaySearchResult
+            .Select(hotel => new HolidaySearchResult
         {
             Flight = flights.FirstOrDefault(x => x.To == query.TravelingTo && x.From == query.DepartingFrom),
             Hotel = hotel,
