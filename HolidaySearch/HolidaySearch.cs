@@ -13,6 +13,7 @@ public class HolidaySearch
         _hotelsSearch = hotelsSearch;
         _flightsSearch = flightsSearch;
     }
+
     public void Search(HolidaySearchQuery query)
     {
         var hotels = _hotelsSearch.GetHotels();
@@ -20,9 +21,16 @@ public class HolidaySearch
         Results = hotels
             .Where(hotel => hotel.LocalAirports.Contains(query.TravelingTo))
             .Select(hotel => new HolidaySearchResult
-        {
-            Flight = flights.FirstOrDefault(x => x.To == query.TravelingTo && x.From == query.DepartingFrom),
-            Hotel = hotel,
-        }).OrderBy(x => x.TotalPrice).ToList();
+            {
+                Flight = flights.FirstOrDefault(flight => flight.To == query.TravelingTo
+                                                          && flight.From == query.DepartingFrom
+                                                          && MatchesDepartureDate(query,flight)),
+                Hotel = hotel,
+            }).OrderBy(x => x.TotalPrice).ToList();
+    }
+
+    private bool MatchesDepartureDate(HolidaySearchQuery query, Flight flight)
+    {
+        return string.IsNullOrEmpty(query.DepartureDate) || DateOnly.Parse(query.DepartureDate).Equals(flight.DepartureDate);
     }
 }

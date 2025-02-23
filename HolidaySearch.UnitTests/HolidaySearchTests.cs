@@ -102,6 +102,7 @@ public class HolidaySearchTests
         {
             DepartingFrom = "MAN",
             TravelingTo = "AGP",
+            DepartureDate = $"{year}/{month}/{day}"
         };
         var search = new HolidaySearch(_hotelsSearch, _flightSearch);
 
