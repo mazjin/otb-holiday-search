@@ -106,6 +106,9 @@ public class HolidaySearchTests
 
         // Assert
         search.Results.ForEach(result =>
-            result.Flight.DepartureDate.ShouldBeEquivalentTo(new DateOnly(year, month, day)));
+            {
+                result.Flight.DepartureDate.ShouldBeEquivalentTo(new DateOnly(year, month, day));
+                result.Hotel.ArrivalDate.ShouldBeEquivalentTo(new DateOnly(year, month, day));
+            });
     }
 }
