@@ -1,4 +1,6 @@
-﻿namespace HolidaySearch.Models;
+﻿using HolidaySearch.Models.Enums;
+
+namespace HolidaySearch.Models;
 
 public class HolidaySearchQuery
 {

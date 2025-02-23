@@ -1,13 +1,14 @@
-﻿using HolidaySearch.Models;
+﻿using HolidaySearch.Interfaces;
+using HolidaySearch.Models;
+using HolidaySearch.Models.Enums;
 
 namespace HolidaySearch;
 
 public class HolidaySearch
 {
+    private readonly IAirportsSearch _airportsSearch;
     private readonly IFlightsSearch _flightsSearch;
     private readonly IHotelsSearch _hotelsSearch;
-    private readonly IAirportsSearch _airportsSearch;
-    public List<HolidaySearchResult> Results { get; set; }
 
     public HolidaySearch(IHotelsSearch hotelsSearch, IFlightsSearch flightsSearch, IAirportsSearch airportsSearch)
     {
@@ -15,6 +16,8 @@ public class HolidaySearch
         _flightsSearch = flightsSearch;
         _airportsSearch = airportsSearch;
     }
+
+    public List<HolidaySearchResult> Results { get; set; }
 
     public void Search(HolidaySearchQuery query)
     {
@@ -30,7 +33,7 @@ public class HolidaySearch
                                                           && MatchesDepartureDate(query, flight));
         Results = destinations
             .Join(flights, destination => destination.airport, flight => flight.To,
-                (destination, flight) => new HolidaySearchResult() { Hotel = destination.hotel, Flight = flight })
+                (destination, flight) => new HolidaySearchResult { Hotel = destination.hotel, Flight = flight })
             .OrderBy(x => x.TotalPrice)
             .ToList();
     }
@@ -42,7 +45,10 @@ public class HolidaySearch
 
     private bool MatchesDepartingFrom(HolidaySearchQuery query, Flight flight)
     {
-        var departureAirportCodes = query.DepartingFromType is LocationType.Region ? _airportsSearch.GetAirports(airport => airport.Region == query.DepartingFrom).Select(airport => airport.Code).ToList() : new List<string>(){query.DepartingFrom};
+        var departureAirportCodes = query.DepartingFromType is LocationType.Region
+            ? _airportsSearch.GetAirports(airport => airport.Region == query.DepartingFrom)
+                .Select(airport => airport.Code).ToList()
+            : new List<string> { query.DepartingFrom };
         return string.IsNullOrEmpty(query.DepartingFrom) || departureAirportCodes.Contains(flight.From);
     }
 

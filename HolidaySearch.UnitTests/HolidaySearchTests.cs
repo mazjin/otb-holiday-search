@@ -1,4 +1,6 @@
+using HolidaySearch.Interfaces;
 using HolidaySearch.Models;
+using HolidaySearch.Models.Enums;
 using NSubstitute;
 using Shouldly;
 
@@ -6,9 +8,9 @@ namespace HolidaySearch.UnitTests;
 
 public class HolidaySearchTests
 {
-    private readonly IHotelsSearch _hotelsSearch;
-    private readonly IFlightsSearch _flightSearch;
     private readonly IAirportsSearch _airportSearch;
+    private readonly IFlightsSearch _flightSearch;
+    private readonly IHotelsSearch _hotelsSearch;
 
     public HolidaySearchTests()
     {
@@ -59,7 +61,7 @@ public class HolidaySearchTests
         // Arrange
         var query = new HolidaySearchQuery
         {
-            TravelingTo = destination,
+            TravelingTo = destination
         };
         var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
 
@@ -80,7 +82,7 @@ public class HolidaySearchTests
         // Arrange
         var query = new HolidaySearchQuery
         {
-            DepartingFrom = departureAirport,
+            DepartingFrom = departureAirport
         };
         var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
 
@@ -165,7 +167,7 @@ public class HolidaySearchTests
     public void HolidaySearch_ShouldReturnCorrectValuesForExampleCase1()
     {
         // Arrange
-        var query = new HolidaySearchQuery()
+        var query = new HolidaySearchQuery
             { DepartingFrom = "MAN", TravelingTo = "AGP", DepartureDate = "2023/07/01", Duration = 7 };
         var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
 
@@ -182,7 +184,7 @@ public class HolidaySearchTests
     public void HolidaySearch_ShouldReturnCorrectValuesForExampleCase2()
     {
         // Arrange
-        var query = new HolidaySearchQuery()
+        var query = new HolidaySearchQuery
         {
             DepartingFrom = "London", DepartingFromType = LocationType.Region, TravelingTo = "PMI",
             DepartureDate = "2023/06/15", Duration = 10
@@ -202,7 +204,7 @@ public class HolidaySearchTests
     public void HolidaySearch_ShouldReturnCorrectValuesForExampleCase3()
     {
         // Arrange
-        var query = new HolidaySearchQuery()
+        var query = new HolidaySearchQuery
             { DepartingFrom = null, TravelingTo = "LPA", DepartureDate = "2022/11/10", Duration = 14 };
         var search = new HolidaySearch(_hotelsSearch, _flightSearch, _airportSearch);
 

@@ -5,38 +5,31 @@ namespace HolidaySearch.UnitTests;
 
 public static class Fixtures
 {
+    private static List<T> GetFixture<T>(string filePath, Func<T, bool>? filter) where T : class
+    {
+        List<T>? data = new();
+        using (var sr = new StreamReader(filePath))
+        {
+            var json = sr.ReadToEnd();
+            data = JsonSerializer.Deserialize<List<T>>(json);
+        }
+
+        if (data is null) throw new FileNotFoundException();
+        return filter is null ? data : data.Where(filter).ToList();
+    }
+
     public static List<Hotel> GetHotels(Func<Hotel, bool>? filter)
     {
-        List<Hotel>? hotels = new();
-        using (StreamReader sr = new StreamReader("hotels.json"))
-        {
-            string json = sr.ReadToEnd();
-            hotels = JsonSerializer.Deserialize<List<Hotel>>(json);
-        }
-        if (hotels is null) throw new FileNotFoundException();
-        return filter is null ? hotels : hotels.Where(filter).ToList();
+        return GetFixture("Data/hotels.json", filter);
     }
+
     public static List<Flight> GetFlights(Func<Flight, bool>? filter)
     {
-        List<Flight>? flights = new();
-        using (StreamReader sr = new StreamReader("flights.json"))
-        {
-            string json = sr.ReadToEnd();
-            flights = JsonSerializer.Deserialize<List<Flight>>(json);
-        }
-        if (flights is null) throw new FileNotFoundException();
-        return filter is null ? flights : flights.Where(filter).ToList();
+        return GetFixture("Data/flights.json", filter);
     }
 
     public static List<Airport> GetAirports(Func<Airport, bool>? filter)
     {
-        List<Airport>? airports = new();
-        using (StreamReader sr = new StreamReader("airports.json"))
-        {
-            string json = sr.ReadToEnd();
-            airports = JsonSerializer.Deserialize<List<Airport>>(json);
-        }
-        if (airports is null) throw new FileNotFoundException();
-        return filter is null ? airports : airports.Where(filter).ToList();
+        return GetFixture("Data/airports.json", filter);
     }
 }

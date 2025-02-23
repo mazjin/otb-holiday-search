@@ -1,6 +1,6 @@
 ﻿using HolidaySearch.Models;
 
-namespace HolidaySearch;
+namespace HolidaySearch.Interfaces;
 
 public interface IAirportsSearch
 {
